@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:projecy/App/core/utils/personel_validators.dart';
 import 'package:projecy/App/screens/base_screen/view/base_screen.dart';
 import 'package:projecy/App/screens/personeldetails/bloc/personeldetails_bloc.dart';
 
@@ -13,8 +14,8 @@ class PersonnelDetails extends StatelessWidget {
         builder: (context, state) {
           return Stack(
             children: [
-              _buildContentCard(context, state),
               _buildHeaderBackground(context),
+              _buildContentCard(context, state),
               _buildHeaderContent(context),
             ],
           );
@@ -87,25 +88,25 @@ class PersonnelDetails extends StatelessWidget {
   Widget _buildContentCard(BuildContext context, PersonneldetailsState state) { 
     final bloc = context.read<PersonneldetailsBloc>();
     return Positioned(
-      top: MediaQuery.of(context).size.height * 0.20,
+      top: MediaQuery.of(context).size.height * 0.25,
       left: 0,
       right: 0,
       bottom: 0,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF5F5F5),
-          borderRadius: const BorderRadius.only(
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          color: Color.fromARGB(255, 252, 250, 250),
+          borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30.0),
             topRight: Radius.circular(30.0),
           ),
         ),
-        child: Stack(
+        child: Column(
           children: [
-            Positioned.fill(
+            Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(25, 0, 25, 100),
+                padding: const EdgeInsets.fromLTRB(25, 30, 25, 120),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -193,15 +194,11 @@ class PersonnelDetails extends StatelessWidget {
                 ),
               ),
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                color: const Color(0xFFF5F5F5),
-                padding: const EdgeInsets.fromLTRB(25, 15, 25, 25),
-                child: _buildActionButtons(context, state),
-              ),
+            Container(
+              width: double.infinity,
+              color: const Color(0xFFF5F5F5),
+              padding: const EdgeInsets.fromLTRB(25, 15, 25, 25),
+              child: _buildActionButtons(context, state),
             ),
           ],
         ),
@@ -260,7 +257,7 @@ class PersonnelDetails extends StatelessWidget {
       height: 55,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(25),
         border: Border.all(color: Colors.grey.shade300, width: 1),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -457,8 +454,7 @@ class PersonnelDetails extends StatelessWidget {
             height: 55,
             child: ElevatedButton(
               onPressed: state.isSaving ? null : () {
-                context.read<PersonneldetailsBloc>().add(FormSaved());
-                Navigator.of(context).pushNamed('/personellist');
+                _handleSaveForm(context, state);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFFDD835),
@@ -489,6 +485,50 @@ class PersonnelDetails extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  void _handleSaveForm(BuildContext context, PersonneldetailsState state) {
+    final errors = PersonnelValidators.validateForm(
+      fullName: state.fullName,
+      address: state.address,
+      suburb: state.suburb,
+      stateCode: state.stateCode,
+      postCode: state.postCode,
+      contactNumber: state.contactNumber,
+      // selectedRoles: state.selectedRoles,
+      additionalNotes: state.additionalNotes,
+    );
+
+    if (errors.isNotEmpty) {
+      _showValidationError(context, errors);
+    } else {
+      // Form is valid, proceed with saving
+      context.read<PersonneldetailsBloc>().add(FormSaved());
+      Navigator.of(context).pushNamed('/personellist');
+    }
+  }
+
+  void _showValidationError(BuildContext context, Map<String, String> errors) {
+    String errorMessage = 'Please fix the following errors:\n\n';
+    errors.forEach((field, error) {
+      errorMessage += '• $error\n';
+    });
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Validation Error'),
+          content: Text(errorMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
