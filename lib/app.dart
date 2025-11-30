@@ -12,7 +12,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.personellist,
+      initialRoute: Routes.loginscreen,
       routes: RouteNavigator.routes,
       theme: lightTheme,
       darkTheme: darkTheme,

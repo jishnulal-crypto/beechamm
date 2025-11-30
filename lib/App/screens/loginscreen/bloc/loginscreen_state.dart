@@ -40,3 +40,68 @@ class LoginscreenState {
     );
   }
 }
+
+
+
+
+class PasswordVisibilityState extends Equatable {
+  final bool isObscured;
+
+  const PasswordVisibilityState({required this.isObscured});
+
+  PasswordVisibilityState copyWith({bool? isObscured}) {
+    return PasswordVisibilityState(
+      isObscured: isObscured ?? this.isObscured,
+    );
+  }
+
+  @override
+  List<Object?> get props => [isObscured];
+}
+
+
+class RememberMeState extends Equatable {
+  final bool isEnabled;
+  final bool isLoading;
+  final String savedEmail;
+  final String savedPassword;
+  final bool hasSavedCredentials;
+  final String? error;
+
+  const RememberMeState({
+    this.isEnabled = false,
+    this.isLoading = false,
+    this.savedEmail = '',
+    this.savedPassword = '',
+    this.hasSavedCredentials = false,
+    this.error,
+  });
+
+  RememberMeState copyWith({
+    bool? isEnabled,
+    bool? isLoading,
+    String? savedEmail,
+    String? savedPassword,
+    bool? hasSavedCredentials,
+    String? error,
+  }) {
+    return RememberMeState(
+      isEnabled: isEnabled ?? this.isEnabled,
+      isLoading: isLoading ?? this.isLoading,
+      savedEmail: savedEmail ?? this.savedEmail,
+      savedPassword: savedPassword ?? this.savedPassword,
+      hasSavedCredentials: hasSavedCredentials ?? this.hasSavedCredentials,
+      error: error ?? this.error,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+    isEnabled,
+    isLoading,
+    savedEmail,
+    savedPassword,
+    hasSavedCredentials,
+    error,
+  ];
+}
